@@ -1,9 +1,8 @@
 package lexer
 
 import (
-	"testing"
-
 	"bwh/token"
+	"testing"
 )
 
 func TestNextToken(t *testing.T) {
@@ -15,6 +14,8 @@ func TestNextToken(t *testing.T) {
 		};
 
 		let result = add(five, ten);
+		!-/*5;
+		5 < 10 > 5;
 	`
 	tests := []struct {
 		expectedType    token.TokenType
@@ -56,6 +57,10 @@ func TestNextToken(t *testing.T) {
 		{token.IDENT, "ten"},
 		{token.RPAREN, ")"},
 		{token.SEMICOLON, ";"},
+		{token.BANG, "!"},
+		{token.MINUS, "-"},
+		{token.SLASH, "/"},
+		{token.INT, "5"},
 		{token.EOF, ""},
 	}
 
