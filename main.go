@@ -26,9 +26,9 @@ func main() {
 	`
 	l := lexer.New(input)
 	for {
-		l.NextToken()
-		fmt.Printf("TokenType: %s, TokenLiteral: %s\n", l.NextToken().Type, l.NextToken().Literal)
-		if l.NextToken().Type == token.EOF {
+		tok := l.NextToken()
+		fmt.Printf("TokenType: %s, TokenLiteral: %s\n", tok.Type, tok.Literal)
+		if tok.Type == token.EOF {
 			break
 		} else {
 			continue
