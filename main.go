@@ -23,6 +23,9 @@ func main() {
 		} else {
 			return false;
 		}
+
+	10 == 10;
+	10 != 9;
 	`
 	l := lexer.New(input)
 	for {
