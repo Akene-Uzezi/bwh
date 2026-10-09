@@ -4,8 +4,8 @@ A simple lexer implementation written in Go for tokenizing a basic programming l
 
 ## Features
 
-- Tokenizes identifiers, integers, keywords (let, fn), operators (+, =), and punctuation
-- Handles basic language constructs: variable declarations, function definitions, function calls
+- Tokenizes identifiers, integers, keywords (let, fn, true, false, if, else, return), operators (+, -, *, /, =, ==, !=, <, >, !), and punctuation
+- Handles language constructs: variable declarations, function definitions, function calls, conditionals, boolean expressions
 - Includes comprehensive test coverage
 
 ## Project Structure
@@ -28,6 +28,14 @@ bwh/
 - `INT` - Integer literals
 - `ASSIGN` - `=`
 - `PLUS` - `+`
+- `MINUS` - `-`
+- `BANG` - `!`
+- `ASTERISK` - `*`
+- `SLASH` - `/`
+- `LT` - `<`
+- `GT` - `>`
+- `EQ` - `==`
+- `NOT_EQ` - `!=`
 - `COMMA` - `,`
 - `SEMICOLON` - `;`
 - `LPAREN` - `(`
@@ -36,6 +44,11 @@ bwh/
 - `RBRACE` - `}`
 - `FUNCTION` - `fn` keyword
 - `LET` - `let` keyword
+- `TRUE` - `true` keyword
+- `FALSE` - `false` keyword
+- `IF` - `if` keyword
+- `ELSE` - `else` keyword
+- `RETURN` - `return` keyword
 
 ## Usage
 
@@ -49,11 +62,34 @@ import (
 )
 
 func main() {
-    input := `let x = 5;`
+    input := `
+        let five = 5;
+        let ten = 10;
+        let add = fn(x, y) {
+            x + y;
+        };
+
+        let result = add(five, ten);
+        !-/*5;
+        5 < 10 > 5;
+
+        if (5 < 10) {
+            return true;
+        } else {
+            return false;
+        }
+
+        10 == 10;
+        10 != 9;
+    `
     l := lexer.New(input)
     
-    for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-        fmt.Printf("%s: %s\n", tok.Type, tok.Literal)
+    for {
+        tok := l.NextToken()
+        fmt.Printf("TokenType: %s, TokenLiteral: %s\n", tok.Type, tok.Literal)
+        if tok.Type == token.EOF {
+            break
+        }
     }
 }
 ```
@@ -82,6 +118,17 @@ let add = fn(x, y) {
 };
 
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
+
+10 == 10;
+10 != 9;
 ```
 
 ## Implementation Details
@@ -93,6 +140,7 @@ The `Lexer` struct maintains the input string and current position. Key methods:
 - `New(input string) *Lexer` - Creates a new lexer instance
 - `NextToken() token.Token` - Returns the next token from input
 - `readChar()` - Advances the position in the input
+- `peekChar()` - Peeks at the next character without advancing
 - `readIdentifier()` - Reads an identifier (variable/function name)
 - `readNumber()` - Reads an integer literal
 - `skipWhiteSpace()` - Skips whitespace characters
