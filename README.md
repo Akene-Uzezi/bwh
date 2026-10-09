@@ -45,6 +45,7 @@ package main
 import (
     "fmt"
     "bwh/lexer"
+    "bwh/token"
 )
 
 func main() {
@@ -83,6 +84,27 @@ let add = fn(x, y) {
 let result = add(five, ten);
 ```
 
-## License
+## Implementation Details
 
-MIT
+### Lexer (`lexer/lexer.go`)
+
+The `Lexer` struct maintains the input string and current position. Key methods:
+
+- `New(input string) *Lexer` - Creates a new lexer instance
+- `NextToken() token.Token` - Returns the next token from input
+- `readChar()` - Advances the position in the input
+- `readIdentifier()` - Reads an identifier (variable/function name)
+- `readNumber()` - Reads an integer literal
+- `skipWhiteSpace()` - Skips whitespace characters
+
+### Token Package (`token/token.go`)
+
+Defines the token types and a lookup function for keywords:
+
+- `TokenType` - String type for token classification
+- `Token` - Struct containing Type and Literal
+- `LookUpIdent(ident string) TokenType` - Maps keywords to token types
+
+## Requirements
+
+- Go 1.21+
