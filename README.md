@@ -1,21 +1,26 @@
-# BWH - Basic Lexer/Tokenizer in Go
+# BWH - Badwhipp Programming Language
 
-A simple lexer implementation written in Go for tokenizing a basic programming language.
+A simple lexer/tokenizer and REPL implementation written in Go for the Badwhipp programming language.
 
 ## Features
 
 - Tokenizes identifiers, integers, keywords (let, fn, true, false, if, else, return), operators (+, -, *, /, =, ==, !=, <, >, !), and punctuation
 - Handles language constructs: variable declarations, function definitions, function calls, conditionals, boolean expressions
 - Includes comprehensive test coverage
+- Interactive REPL for experimentation
 
 ## Project Structure
 
 ```
 bwh/
 ├── go.mod              # Go module definition
+├── main.go             # Entry point with REPL
+├── commit.sh           # Commit helper script
 ├── lexer/
 │   ├── lexer.go        # Lexer implementation
 │   └── lexer_test.go   # Lexer tests
+├── repl/
+│   └── repl.go         # REPL implementation
 └── token/
     └── token.go        # Token types and structures
 ```
@@ -51,6 +56,22 @@ bwh/
 - `RETURN` - `return` keyword
 
 ## Usage
+
+### Running the REPL
+
+```bash
+go run main.go
+```
+
+This starts an interactive REPL where you can type Badwhipp code and see the tokenized output:
+
+```
+Hello user! This is the badwhipp programming language!
+Feel free to type in commands
+>>
+```
+
+### Using the Lexer Programmatically
 
 ```go
 package main
@@ -152,6 +173,13 @@ Defines the token types and a lookup function for keywords:
 - `TokenType` - String type for token classification
 - `Token` - Struct containing Type and Literal
 - `LookUpIdent(ident string) TokenType` - Maps keywords to token types
+
+### REPL (`repl/repl.go`)
+
+Simple Read-Eval-Print Loop that:
+- Reads input line by line
+- Tokenizes each line using the lexer
+- Prints each token
 
 ## Requirements
 
