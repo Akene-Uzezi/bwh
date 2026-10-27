@@ -1,40 +1,19 @@
 package main
 
 import (
-	"bwh/lexer"
-	"bwh/token"
 	"fmt"
+	"os"
+	"os/user"
+
+	"bwh/repl"
 )
 
 func main() {
-	input := `
-		let five = 5;
-		let ten = 10;
-		let add = fn(x, y) {
-			x + y;
-		};
-
-		let result = add(five, ten);
-		!-/*5;
-		5 < 10 > 5;
-
-		if (5 < 10) {
-			return true;
-		} else {
-			return false;
-		}
-
-	10 == 10;
-	10 != 9;
-	`
-	l := lexer.New(input)
-	for {
-		tok := l.NextToken()
-		fmt.Printf("TokenType: %s, TokenLiteral: %s\n", tok.Type, tok.Literal)
-		if tok.Type == token.EOF {
-			break
-		} else {
-			continue
-		}
+	user, err := user.Current()
+	if err != nil {
+		panic(err)
 	}
+	fmt.Printf("Hello %s! This is the badwhipp programming language!\n", user.Username)
+	fmt.Printf("Feel free to type in commands\n")
+	repl.Start(os.Stdin, os.Stdout)
 }
