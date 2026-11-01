@@ -25,7 +25,7 @@ const (
 	LT       = "<"
 	GT       = ">"
 	EQ       = "=="
-	NOT_EQ   = "!="
+	NOTEQ    = "!="
 
 	COMMA     = ","
 	SEMICOLON = ";"
