@@ -1,12 +1,13 @@
 # BWH - Badwhipp Programming Language
 
-A simple lexer/tokenizer and REPL implementation written in Go for the Badwhipp programming language.
+A simple lexer/tokenizer, parser, and REPL implementation written in Go for the Badwhipp programming language.
 
 ## Features
 
 - Tokenizes identifiers, integers, keywords (let, fn, true, false, if, else, return), operators (+, -, *, /, =, ==, !=, <, >, !), and punctuation
 - Handles language constructs: variable declarations, function definitions, function calls, conditionals, boolean expressions
-- Includes comprehensive test coverage
+- Parser with AST generation for let statements and identifiers
+- Includes comprehensive test coverage for lexer
 - Interactive REPL for experimentation
 
 ## Project Structure
@@ -21,8 +22,12 @@ bwh/
 │   └── lexer_test.go   # Lexer tests
 ├── repl/
 │   └── repl.go         # REPL implementation
-└── token/
-    └── token.go        # Token types and structures
+├── token/
+│   └── token.go        # Token types and structures
+├── parser/
+│   └── parser.go       # Parser implementation
+└── ast/
+    └── ast.go          # Abstract Syntax Tree nodes
 ```
 
 ## Token Types
@@ -115,6 +120,27 @@ func main() {
 }
 ```
 
+### Using the Parser
+
+```go
+package main
+
+import (
+    "fmt"
+    "bwh/lexer"
+    "bwh/parser"
+)
+
+func main() {
+    input := `let x = 5;`
+    l := lexer.New(input)
+    p := parser.New(l)
+    
+    program := p.ParseProgram()
+    fmt.Printf("%+v\n", program)
+}
+```
+
 ## Running Tests
 
 ```bash
@@ -173,6 +199,25 @@ Defines the token types and a lookup function for keywords:
 - `TokenType` - String type for token classification
 - `Token` - Struct containing Type and Literal
 - `LookUpIdent(ident string) TokenType` - Maps keywords to token types
+
+### Parser (`parser/parser.go`)
+
+The `Parser` struct uses the lexer to parse tokens into an AST. Key methods:
+
+- `New(l *lexer.Lexer) *Parser` - Creates a new parser instance
+- `ParseProgram() *ast.Program` - Parses the entire program (currently returns nil, work in progress)
+- `nextToken()` - Advances to the next token
+
+### AST (`ast/ast.go`)
+
+Defines the Abstract Syntax Tree node interfaces and implementations:
+
+- `Node` interface - Base interface with `TokenLiteral()` method
+- `Statement` interface - For statements like let declarations
+- `Expression` interface - For expressions
+- `Program` - Root node containing a list of statements
+- `LetStatement` - Represents variable declarations (`let x = 5;`)
+- `Identifier` - Represents variable/function names
 
 ### REPL (`repl/repl.go`)
 
