@@ -6,7 +6,7 @@ A simple lexer/tokenizer, parser, and REPL implementation written in Go for the 
 
 - Tokenizes identifiers, integers, keywords (let, fn, true, false, if, else, return), operators (+, -, *, /, =, ==, !=, <, >, !), and punctuation
 - Handles language constructs: variable declarations, function definitions, function calls, conditionals, boolean expressions
-- Parser with AST generation for let statements
+- Parser with AST generation for let statements and return statements
 - Includes comprehensive test coverage for lexer and parser
 - Interactive REPL for experimentation
 
@@ -151,8 +151,40 @@ func main() {
 }
 ```
 
+### Using the Parser with Return Statements
+
+```go
+package main
+
+import (
+    "fmt"
+    "bwh/lexer"
+    "bwh/parser"
+)
+
+func main() {
+    input := `
+        return 5;
+        return 10;
+        return 9933322;
+    `
+    l := lexer.New(input)
+    p := parser.New(l)
+    
+    program := p.ParseProgram()
+    fmt.Printf("%+v\n", program)
+    
+    if errors := p.Errors(); len(errors) > 0 {
+        for _, err := range errors {
+            fmt.Printf("Parser error: %s\n", err)
+        }
+    }
+}
+```
+
 The parser currently supports:
 - Let statements (`let x = 5;`)
+- Return statements (`return 5;`)
 - Returns error messages for invalid syntax
 
 ## Running Tests
@@ -163,7 +195,7 @@ go test ./...
 
 This runs all tests including:
 - Lexer tests (comprehensive tokenization test cases)
-- Parser tests (let statement parsing with error checking)
+- Parser tests (let statement parsing, return statement parsing with error checking)
 
 ## Building
 
@@ -234,6 +266,7 @@ The `Parser` struct uses the lexer to parse tokens into an AST. Key methods:
 
 Currently implements:
 - Let statement parsing (`let identifier = expression;`)
+- Return statement parsing (`return expression;`)
 - Error collection and reporting for invalid syntax
 
 ### AST (`ast/ast.go`)
@@ -241,10 +274,11 @@ Currently implements:
 Defines the Abstract Syntax Tree node interfaces and implementations:
 
 - `Node` interface - Base interface with `TokenLiteral()` method
-- `Statement` interface - For statements like let declarations
+- `Statement` interface - For statements like let declarations and return statements
 - `Expression` interface - For expressions
 - `Program` - Root node containing a list of statements
 - `LetStatement` - Represents variable declarations (`let x = 5;`)
+- `ReturnStatement` - Represents return statements (`return 5;`)
 - `Identifier` - Represents variable/function names
 
 ### REPL (`repl/repl.go`)
