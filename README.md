@@ -6,8 +6,8 @@ A simple lexer/tokenizer, parser, and REPL implementation written in Go for the 
 
 - Tokenizes identifiers, integers, keywords (let, fn, true, false, if, else, return), operators (+, -, *, /, =, ==, !=, <, >, !), and punctuation
 - Handles language constructs: variable declarations, function definitions, function calls, conditionals, boolean expressions
-- Parser with AST generation for let statements and identifiers
-- Includes comprehensive test coverage for lexer
+- Parser with AST generation for let statements
+- Includes comprehensive test coverage for lexer and parser
 - Interactive REPL for experimentation
 
 ## Project Structure
@@ -25,7 +25,8 @@ bwh/
 ├── token/
 │   └── token.go        # Token types and structures
 ├── parser/
-│   └── parser.go       # Parser implementation
+│   ├── parser.go       # Parser implementation
+│   └── parser_test.go  # Parser tests
 └── ast/
     └── ast.go          # Abstract Syntax Tree nodes
 ```
@@ -45,7 +46,7 @@ bwh/
 - `LT` - `<`
 - `GT` - `>`
 - `EQ` - `==`
-- `NOT_EQ` - `!=`
+- `NOTEQ` - `!=`
 - `COMMA` - `,`
 - `SEMICOLON` - `;`
 - `LPAREN` - `(`
@@ -75,6 +76,8 @@ Hello user! This is the badwhipp programming language!
 Feel free to type in commands
 >>
 ```
+
+The REPL tokenizes each line and prints the tokens. It does not yet parse or evaluate the code.
 
 ### Using the Lexer Programmatically
 
@@ -138,8 +141,19 @@ func main() {
     
     program := p.ParseProgram()
     fmt.Printf("%+v\n", program)
+    
+    // Check for parsing errors
+    if errors := p.Errors(); len(errors) > 0 {
+        for _, err := range errors {
+            fmt.Printf("Parser error: %s\n", err)
+        }
+    }
 }
 ```
+
+The parser currently supports:
+- Let statements (`let x = 5;`)
+- Returns error messages for invalid syntax
 
 ## Running Tests
 
@@ -147,11 +161,17 @@ func main() {
 go test ./...
 ```
 
+This runs all tests including:
+- Lexer tests (comprehensive tokenization test cases)
+- Parser tests (let statement parsing with error checking)
+
 ## Building
 
 ```bash
 go build
 ```
+
+This creates an executable `bwh` that runs the REPL.
 
 ## Example Input
 
@@ -190,7 +210,7 @@ The `Lexer` struct maintains the input string and current position. Key methods:
 - `peekChar()` - Peeks at the next character without advancing
 - `readIdentifier()` - Reads an identifier (variable/function name)
 - `readNumber()` - Reads an integer literal
-- `skipWhiteSpace()` - Skips whitespace characters
+- `skipWhiteSpace()` - Skips whitespace characters (space, tab, newline, carriage return)
 
 ### Token Package (`token/token.go`)
 
@@ -200,13 +220,21 @@ Defines the token types and a lookup function for keywords:
 - `Token` - Struct containing Type and Literal
 - `LookUpIdent(ident string) TokenType` - Maps keywords to token types
 
+Keywords recognized: `fn`, `let`, `true`, `false`, `if`, `else`, `return`
+
 ### Parser (`parser/parser.go`)
 
 The `Parser` struct uses the lexer to parse tokens into an AST. Key methods:
 
 - `New(l *lexer.Lexer) *Parser` - Creates a new parser instance
-- `ParseProgram() *ast.Program` - Parses the entire program (currently returns nil, work in progress)
+- `ParseProgram() *ast.Program` - Parses the entire program, returns AST with statements
+- `Errors() []string` - Returns any parsing errors encountered
 - `nextToken()` - Advances to the next token
+- `expectPeek(t token.TokenType)` - Expects the next token to be of a specific type
+
+Currently implements:
+- Let statement parsing (`let identifier = expression;`)
+- Error collection and reporting for invalid syntax
 
 ### AST (`ast/ast.go`)
 
@@ -224,8 +252,8 @@ Defines the Abstract Syntax Tree node interfaces and implementations:
 Simple Read-Eval-Print Loop that:
 - Reads input line by line
 - Tokenizes each line using the lexer
-- Prints each token
+- Prints each token (does not yet parse or evaluate)
 
 ## Requirements
 
-- Go 1.21+
+- Go 1.27.1+
