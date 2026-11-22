@@ -185,7 +185,10 @@ func main() {
 The parser currently supports:
 - Let statements (`let x = 5;`)
 - Return statements (`return 5;`)
+- Expression statements (parses expressions but doesn't evaluate them)
 - Returns error messages for invalid syntax
+
+**Note**: Expression parsing is not yet fully implemented. The parser recognizes expressions in let/return statements but skips to the semicolon without building full expression AST nodes.
 
 ## Running Tests
 
@@ -279,7 +282,7 @@ Defines the Abstract Syntax Tree node interfaces and implementations:
 - `Program` - Root node containing a list of statements
 - `LetStatement` - Represents variable declarations (`let x = 5;`)
 - `ReturnStatement` - Represents return statements (`return 5;`)
-- `Identifier` - Represents variable/function names
+- `ExpressionStatement` - Represents expression statements (expressions used as statements)
 
 ### REPL (`repl/repl.go`)
 
